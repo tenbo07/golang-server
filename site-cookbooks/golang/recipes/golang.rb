@@ -1,3 +1,13 @@
+%w{/usr/local/gocode /usr/local/gocode/bin /usr/local/gocode/src /usr/local/gocode/pkg}.each do |dir|
+  directory dir do
+    owner 'root'
+    group 'root'
+    mode '0755'
+    recursive true
+    action :create
+  end
+end
+
 filename = node[:golang][:tar_url].split('/').last
 
 remote_file "/tmp/#{filename}" do
@@ -6,6 +16,9 @@ remote_file "/tmp/#{filename}" do
   owner 'root'
   group 'root'
   notifies :run, 'script[install_golang]'
+  notifies :create, 'link[/usr/local/bin/go]'
+  notifies :run, 'execute[env_GOPATH]'
+  notifies :run, 'script[install_revel]'
 end
 
 script 'install_golang' do
@@ -22,21 +35,12 @@ link '/usr/local/bin/go' do
   to '/usr/local/go/bin/go'
   link_type :symbolic
   owner 'root'
-  action :create
+  action :nothing
 end
 
-%w{/usr/local/gocode /usr/local/gocode/bin /usr/local/gocode/src /usr/local/gocode/pkg}.each do |dir|
-  directory dir do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    recursive true
-    action :create
-  end
-end
 
-execute 'env GOPATH' do
+execute 'env_GOPATH' do
   not_if "env | grep GOPATH"
   command 'echo "export GOPATH=/usr/local/gocode" >> ~/.bashrc'
-  action :run
+  action :nothing
 end

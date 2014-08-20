@@ -1,16 +1,12 @@
-execute 'install revel' do
-  not_if "ls $GOPATH/src/github.com/revel/revel/"
-  command 'source ~/.bashrc && go get github.com/revel/revel'
-  action :run
-end
-
-script 'install revel cmd' do
+script 'install_revel' do
+  action :nothing
   not_if "which revel"
   interpreter 'bash'
   user 'root'
   code <<-EOF
-    source ~/.bashrc
-    go get github.com/revel/cmd/revel
+    source /root/.bashrc
+    /usr/local/bin/go get github.com/revel/revel
+    /usr/local/bin/go get github.com/revel/cmd/revel
     echo 'export PATH="$PATH:$GOPATH/bin"' >> ~/.bashrc
   EOF
 end
