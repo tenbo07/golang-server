@@ -29,7 +29,7 @@ script 'install_golang' do
   code <<-EOF
     tar -C /usr/local -xzf #{filename}
     echo "export GOPATH=/usr/local/gocode" >> ~/.bashrc
-    export GOPATH=/usr/local/gocode" >> /home/ec2-user/.bashrc
+    echo "export GOPATH=/usr/local/gocode" >> /home/ec2-user/.bashrc
     chmod 755 /etc/sudoers
   EOF
 end
