@@ -2,7 +2,7 @@
   directory dir do
     owner 'root'
     group 'root'
-    mode '0777'
+    mode '0755'
     recursive true
     action :create
   end
@@ -29,7 +29,6 @@ script 'install_golang' do
   code <<-EOF
     tar -C /usr/local -xzf #{filename}
     echo "export GOPATH=/usr/local/gocode" >> ~/.bashrc
-    echo "export GOPATH=/usr/local/gocode" >> /home/ec2-user/.bashrc
     chmod 755 /etc/sudoers
   EOF
 end
@@ -41,16 +40,8 @@ link '/usr/local/bin/go' do
   action :nothing
 end
 
-
 execute 'env_GOPATH' do
   not_if "env | grep GOPATH"
   command 'echo "export GOPATH=/usr/local/gocode" >> ~/.bashrc'
   action :nothing
-end
-
-template "/etc/sudoers" do
-  source 'sudoers.erb'
-  owner 'root'
-  group 'root'
-  mode '0400'
 end
